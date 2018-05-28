@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  fluentd:
+    container_name: fluentd
+    image: fluentd-demo    
+    volumes:
+      - $PWD/:/fluentd/etc
+    ports:
+      - "24224:24224"
+
+  spring-boot-fluentd-demo:
+    container_name: spring-boot-fluentd-demo
+    image: spring-boot-fluentd-demo
+    ports:
+      - "8080:8080"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost
+        tag: springboot.demo.fluentd
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    ports:
+      - "9200:9200"
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:6.2.4
+    ports:
+      - "5601:5601"
